@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../blocs/category_filter_cubit.dart';
 import '../../../data/repositories/catalog_repository.dart';
+import '../../widgets/app_icon_tile.dart';
 import 'widgets/product_card.dart';
 
 class ProductListScreen extends StatelessWidget {
@@ -38,7 +39,8 @@ class ProductListScreen extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ChoiceChip(
-                          label: Text('${category.emoji} ${category.name}'),
+                          avatar: AppIconTile(icon: category.icon, color: category.color, size: 26),
+                          label: Text(category.name),
                           selected: selected,
                           onSelected: (_) => context
                               .read<CategoryFilterCubit>()

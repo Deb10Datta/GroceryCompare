@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../data/models/product.dart';
 import '../../../../data/repositories/catalog_repository.dart';
+import '../../../widgets/app_icon_tile.dart';
 import '../../../widgets/platform_badge.dart';
 
 class ProductCard extends StatelessWidget {
@@ -41,7 +42,10 @@ class ProductCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         onTap: () => context.push('/product/${product.id}'),
-        leading: Text(product.emoji, style: const TextStyle(fontSize: 28)),
+        leading: AppIconTile(
+          emoji: product.emoji,
+          color: catalog.categoryById(product.categoryId).color,
+        ),
         title: Text('${product.name} · ${product.unit}'),
         subtitle: Row(
           children: [

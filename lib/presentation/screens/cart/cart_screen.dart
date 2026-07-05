@@ -8,6 +8,7 @@ import '../../../blocs/savings_bloc.dart';
 import '../../../data/repositories/catalog_repository.dart';
 import '../../../domain/cart_comparator.dart';
 import 'widgets/cart_line_item.dart';
+import 'widgets/checkout_sheet.dart';
 import 'widgets/platform_comparison_card.dart';
 
 class CartScreen extends StatelessWidget {
@@ -52,18 +53,14 @@ class CartScreen extends StatelessWidget {
                 PlatformComparisonCard(
                   total: totals[i],
                   isBest: i == 0,
-                  onCheckout: () {
+                  onCheckout: () async {
+                    final confirmed = await showCheckoutSheet(context, totals[i]);
+                    if (confirmed != true || !context.mounted) return;
                     context.read<SavingsBloc>().add(SavingsRecorded(
                           platformName: totals[i].platform.name,
                           amountSaved: totals[i].totalSavings,
                         ));
                     context.read<CartBloc>().add(const CartCleared());
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                        '🎉 Order placed on ${totals[i].platform.name}! '
-                        'You saved ₹${totals[i].totalSavings.toStringAsFixed(0)}',
-                      ),
-                    ));
                     context.go('/home/dashboard');
                   },
                 ),
