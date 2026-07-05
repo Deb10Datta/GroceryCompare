@@ -118,7 +118,7 @@ class _AccountLinkingScreenState extends State<AccountLinkingScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: () => context.go('/home/products'),
+                    onPressed: () => context.go('/home/dashboard'),
                     child: const Text('Continue'),
                   ),
                 ),

@@ -22,7 +22,7 @@ GoRouter buildAppRouter(ProfileBloc profileBloc) {
 
       if (!onboardingComplete && !goingToOnboarding) return '/onboarding';
       if (onboardingComplete && (state.matchedLocation == '/' || goingToOnboarding)) {
-        return '/home/products';
+        return '/home/dashboard';
       }
       return null;
     },
