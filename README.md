@@ -15,9 +15,10 @@ price-comparison app, but:
 
 - **All prices, coupons, and payment offers are mock data.** None of the
   five platforms expose a public pricing API, so the app runs on a
-  realistic, deterministic mock catalog (26 products across 6 categories)
-  behind a repository layer. Swapping in a real backend later means
-  replacing one class: `CatalogRepository`.
+  realistic, deterministic mock catalog (90+ branded products across 23
+  categories, from Electronics to Pet Supplies — several product types are
+  offered by more than one brand) behind a repository layer. Swapping in a
+  real backend later means replacing one class: `CatalogRepository`.
 - **The "account linking" step is simulated.** After onboarding, the app
   *animates* logging into (or creating accounts on) the stores in your
   area — but it makes **no network calls to any grocery platform**.
@@ -34,11 +35,12 @@ price-comparison app, but:
 
 | Area | What it does |
 |---|---|
-| **Onboarding** | Collects your email + phone (existing grocery-app user) *or* registers you as a new user, then name/avatar, location, favorite category, and preferred payment method. Runs once; persisted locally. |
+| **Onboarding** | Collects your email + phone (existing grocery-app user) *or* registers you as a new user — both are **mandatory and validated**, with quirky error messages for a malformed email or a phone number that isn't 10 digits. Then name/avatar, your **tribe** (quirky life-stage tiles like "Prime Minister of the Household"), location, favorite category, and preferred payment method. Runs once; persisted locally. |
 | **Location-aware stores** | Your location determines which platforms "deliver" to you (e.g. all 5 in Bengaluru/Mumbai/Delhi, fewer elsewhere). Shown as "Stores operating in your locality" on the Dashboard. |
 | **Account linking (simulated)** | A one-time animated screen that "signs you in" to each local store — with an OTP-verification step if you registered as a new user. |
-| **Dashboard (landing page)** | Your home screen: local stores, a gamified **Savings Master** badge, a savings roadmap, active orders, and order history. |
-| **Product list** | Pre-filtered to your favorite category; each card shows the best coupon-applied price and the minimum basket needed to unlock it. |
+| **Dashboard (landing page)** | Your home screen: a **Start shopping** tile that jumps straight to the catalog, local stores, a gamified **Savings Master** badge, a savings roadmap, active orders, and order history. |
+| **Product list** | 23 categories (Electronics, Shoes, Video Games, Pet Supplies, …) with brand-level products — the same product type often exists from multiple brands at different prices. Pre-filtered to your favorite category; each card shows the best coupon-applied price and the minimum basket needed to unlock it. |
+| **Dark neon theme** | The whole app runs on a midnight-blue dark theme accented with neon blue, red, yellow, purple, and green. |
 | **Product detail** | Every platform's price side by side (base price, coupon code, min basket, live expiry countdown), a bookmark toggle per offer, and a **quantity stepper** so you can add several units at once. |
 | **Cart comparison** | Totals your whole basket on *every* platform, applying each platform's coupon (once you meet its min basket) and your payment method's offer, then highlights the cheapest. |
 | **Checkout (demo)** | A contained "Secure checkout" sheet: order summary → mock payment form → confirmation. Records your savings on completion. |
@@ -105,16 +107,21 @@ Environment: Dart SDK ^3.12.2 (comes with a current stable Flutter).
 1. **Sign in or register.** On first launch, either enter the email and
    phone number "registered with your grocery apps," or tick
    *I am a new user with no registered accounts* and register with a
-   fresh email + phone.
-2. **Complete onboarding.** Pick a name and avatar, enter your location
-   (try `Koramangala, Bengaluru` for all five stores), choose your usual
-   grocery category, and pick how you like to pay.
+   fresh email + phone. Both fields are required — and if the email looks
+   fishy 🐟 or the phone isn't 10 digits 🐦, the form will let you know in
+   its own quirky way.
+2. **Complete onboarding.** Pick a name and avatar, choose your **tribe**
+   (from "Single and rocking" to "Age is just a Number"), enter your
+   location (try `Koramangala, Bengaluru` for all five stores), choose
+   your usual category, and pick how you like to pay.
 3. **Watch the (simulated) account linking.** The app "connects" you to
    each store that delivers to your area — with an OTP step if you're a
    new user — then drops you on the **Dashboard**, your home screen.
-4. **Browse products.** Open the **Products** tab. The list is already
-   filtered to your favorite category; tap **All** or another chip to
-   change it. Tap any product to compare its price on every platform.
+4. **Browse products.** Tap **Start shopping** on the Dashboard (or open
+   the **Products** tab). The list is already filtered to your favorite
+   category; tap **All** or another chip to change it. Many product types
+   come from multiple brands (e.g. Running Shoes by Nike *and* Adidas).
+   Tap any product to compare its price on every platform.
 5. **Add to cart.** On the product page, use the **− / +** stepper to
    pick a quantity, then tap **Add to cart**. The cart isn't tied to one
    platform — it's just products and quantities.

@@ -10,7 +10,57 @@ import '../../widgets/app_icon_tile.dart';
 import '../../widgets/quirky_back_button.dart';
 
 const _avatarChoices = ['🙂', '😎', '🥳', '🧑‍🍳', '🛒', '👩‍🍳', '🐼', '🦊'];
-const _stepCount = 5;
+const _stepCount = 6;
+
+/// Quirky life-stage "tribes" — purely for personality, stored on the profile.
+const tribeChoices = [
+  ('Single and rocking', '🎸'),
+  ('Someone special on standby', '💘'),
+  ('About to be hitched', '💍'),
+  ('Newly formed Tag Team', '🤼'),
+  ('Prime Minister of the Household', '🏛️'),
+  ('Awaiting a Small Member', '🍼'),
+  ('Separated but a Beast', '🦁'),
+  ('Family Feud', '🎪'),
+  ("Still rolling at mid 30's", '🛹'),
+  ('Age is just a Number', '🎂'),
+];
+
+final _emailPattern = RegExp(r'^[\w.+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$');
+
+/// Quirky error for a bad email, or null when it's valid. Empty fields get
+/// no error text (the Next button already refuses to budge), so the form
+/// doesn't yell at people before they've even started typing.
+String? emailError(String value) {
+  final v = value.trim();
+  if (v.isEmpty) return null;
+  if (!v.contains('@')) {
+    return "That email is missing its @ — the little swirl is kind of the whole point 🌀";
+  }
+  if (!_emailPattern.hasMatch(v)) {
+    return 'Hmm, that email looks fishy 🐟 Try something like you@somewhere.com';
+  }
+  return null;
+}
+
+/// Quirky error for a phone number that isn't 10 digits, or null when valid.
+/// Accepts an optional +91 / 0 prefix and ignores spaces and dashes.
+String? phoneError(String value) {
+  var digits = value.trim().replaceAll(RegExp(r'[\s-]'), '');
+  if (digits.isEmpty) return null;
+  if (digits.startsWith('+91')) digits = digits.substring(3);
+  if (digits.length == 11 && digits.startsWith('0')) digits = digits.substring(1);
+  if (RegExp(r'[^\d]').hasMatch(digits)) {
+    return 'Phone numbers are a digits-only club 🕶️ — no letters allowed past the bouncer';
+  }
+  if (digits.length < 10) {
+    return 'Only ${digits.length} digit${digits.length == 1 ? '' : 's'}? Even carrier pigeons need 10 to find you 🐦';
+  }
+  if (digits.length > 10) {
+    return "That's ${digits.length} digits — a phone number and a half! Keep it to 10 ✂️";
+  }
+  return null;
+}
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -31,6 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _page = 0;
   bool _isNewUser = false;
   String _avatar = _avatarChoices.first;
+  String? _tribe;
   String? _categoryId;
   PaymentMethod _paymentMethod = PaymentMethod.upi;
 
@@ -46,25 +97,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
+  TextEditingController get _emailController =>
+      _isNewUser ? _newEmailController : _existingEmailController;
+  TextEditingController get _phoneController =>
+      _isNewUser ? _newPhoneController : _existingPhoneController;
+
+  // Email + phone are mandatory AND must be well-formed before Next unlocks.
+  bool get _accountStepValid =>
+      _emailController.text.trim().isNotEmpty &&
+      _phoneController.text.trim().isNotEmpty &&
+      emailError(_emailController.text) == null &&
+      phoneError(_phoneController.text) == null;
+
   bool get _canContinue => switch (_page) {
-        0 => _isNewUser
-            ? _newEmailController.text.trim().isNotEmpty && _newPhoneController.text.trim().isNotEmpty
-            : _existingEmailController.text.trim().isNotEmpty &&
-                _existingPhoneController.text.trim().isNotEmpty,
+        0 => _accountStepValid,
         1 => _nameController.text.trim().isNotEmpty,
-        2 => _locationController.text.trim().isNotEmpty,
-        3 => _categoryId != null,
+        2 => _tribe != null,
+        3 => _locationController.text.trim().isNotEmpty,
+        4 => _categoryId != null,
         _ => true,
       };
 
   void _next() {
     if (_page == _stepCount - 1) {
       context.read<ProfileBloc>().add(OnboardingCompleted(
-            email: _isNewUser ? _newEmailController.text.trim() : _existingEmailController.text.trim(),
-            phoneNumber: _isNewUser ? _newPhoneController.text.trim() : _existingPhoneController.text.trim(),
+            email: _emailController.text.trim(),
+            phoneNumber: _phoneController.text.trim(),
             isNewUser: _isNewUser,
             name: _nameController.text.trim(),
             avatarEmoji: _avatar,
+            tribe: _tribe!,
             location: _locationController.text.trim(),
             categoryId: _categoryId!,
             paymentMethod: _paymentMethod,
@@ -126,6 +188,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   _buildAccountStep(context),
                   _buildNameStep(context),
+                  _buildTribeStep(context),
                   _buildLocationStep(context),
                   _buildCategoryStep(context, catalog),
                   _buildPaymentStep(context),
@@ -166,7 +229,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   TextField(
                     controller: _existingEmailController,
                     enabled: !_isNewUser,
-                    decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email (required)',
+                      border: const OutlineInputBorder(),
+                      errorText: _isNewUser ? null : emailError(_existingEmailController.text),
+                      errorMaxLines: 3,
+                    ),
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 12),
@@ -174,7 +243,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     controller: _existingPhoneController,
                     enabled: !_isNewUser,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(labelText: 'Phone number', border: OutlineInputBorder()),
+                    decoration: InputDecoration(
+                      labelText: 'Phone number (required)',
+                      border: const OutlineInputBorder(),
+                      errorText: _isNewUser ? null : phoneError(_existingPhoneController.text),
+                      errorMaxLines: 3,
+                    ),
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 8),
@@ -206,14 +280,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: _newEmailController,
-                      decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'Email (required)',
+                        border: const OutlineInputBorder(),
+                        errorText: emailError(_newEmailController.text),
+                        errorMaxLines: 3,
+                      ),
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _newPhoneController,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(labelText: 'Phone number', border: OutlineInputBorder()),
+                      decoration: InputDecoration(
+                        labelText: 'Phone number (required)',
+                        border: const OutlineInputBorder(),
+                        errorText: phoneError(_newPhoneController.text),
+                        errorMaxLines: 3,
+                      ),
                       onChanged: (_) => setState(() {}),
                     ),
                   ],
@@ -255,6 +340,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             }).toList(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTribeStep(BuildContext context) {
+    return _StepScaffold(
+      title: 'Which tribe do you belong to? 🧭',
+      subtitle: 'No judgement — every tribe deserves great grocery deals.',
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: tribeChoices.map((choice) {
+          final (label, emoji) = choice;
+          final selected = label == _tribe;
+          return ChoiceChip(
+            avatar: Text(emoji, style: const TextStyle(fontSize: 18)),
+            label: Text(label),
+            selected: selected,
+            onSelected: (_) => setState(() => _tribe = label),
+          );
+        }).toList(),
       ),
     );
   }

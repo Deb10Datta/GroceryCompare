@@ -56,7 +56,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final category = catalog.categoryById(product.categoryId);
 
     return Scaffold(
-      appBar: AppBar(title: Text(product.name)),
+      appBar: AppBar(title: Text(product.displayName)),
       floatingActionButton: QuirkyBackButton(onPressed: () => Navigator.of(context).pop()),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: ListView(
@@ -70,8 +70,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(product.name, style: Theme.of(context).textTheme.titleLarge),
-                    Text(product.unit, style: Theme.of(context).textTheme.bodyMedium),
+                    Text(product.displayName, style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      product.brand.isEmpty ? product.unit : '${product.unit} · by ${product.brand}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ],
                 ),
               ),
@@ -112,7 +115,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             onPressed: () {
               context.read<CartBloc>().add(CartItemAdded(product.id, quantity: _quantity));
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Added $_quantity × ${product.name} to cart 🛒')),
+                SnackBar(content: Text('Added $_quantity × ${product.displayName} to cart 🛒')),
               );
               setState(() => _quantity = 1);
             },

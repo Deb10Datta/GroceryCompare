@@ -8,6 +8,7 @@ class UserProfile extends Equatable {
   final bool isNewUser;
   final String name;
   final String avatarEmoji;
+  final String tribe;
   final String location;
   final String preferredCategoryId;
   final PaymentMethod preferredPayment;
@@ -19,6 +20,7 @@ class UserProfile extends Equatable {
     this.isNewUser = false,
     this.name = '',
     this.avatarEmoji = '🙂',
+    this.tribe = '',
     this.location = '',
     this.preferredCategoryId = '',
     this.preferredPayment = PaymentMethod.upi,
@@ -31,6 +33,7 @@ class UserProfile extends Equatable {
         'isNewUser': isNewUser,
         'name': name,
         'avatarEmoji': avatarEmoji,
+        'tribe': tribe,
         'location': location,
         'preferredCategoryId': preferredCategoryId,
         'preferredPayment': preferredPayment.name,
@@ -43,6 +46,7 @@ class UserProfile extends Equatable {
         isNewUser: json['isNewUser'] as bool? ?? false,
         name: json['name'] as String? ?? '',
         avatarEmoji: json['avatarEmoji'] as String? ?? '🙂',
+        tribe: json['tribe'] as String? ?? '',
         location: json['location'] as String? ?? '',
         preferredCategoryId: json['preferredCategoryId'] as String? ?? '',
         preferredPayment: PaymentMethod.values.firstWhere(
@@ -59,6 +63,7 @@ class UserProfile extends Equatable {
         isNewUser,
         name,
         avatarEmoji,
+        tribe,
         location,
         preferredCategoryId,
         preferredPayment,

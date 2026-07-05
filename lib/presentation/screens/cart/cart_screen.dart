@@ -21,7 +21,13 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Your Cart')),
       body: BlocBuilder<CartBloc, Map<String, int>>(
-        builder: (context, cart) {
+        builder: (context, rawCart) {
+          // Drop items persisted under product IDs that no longer exist in
+          // the catalog (e.g. after a catalog overhaul), instead of crashing.
+          final cart = {
+            for (final e in rawCart.entries)
+              if (catalog.productByIdOrNull(e.key) != null) e.key: e.value,
+          };
           if (cart.isEmpty) {
             return const Center(
               child: Padding(

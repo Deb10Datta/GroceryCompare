@@ -46,7 +46,7 @@ class ProductCard extends StatelessWidget {
           emoji: product.emoji,
           color: catalog.categoryById(product.categoryId).color,
         ),
-        title: Text('${product.name} · ${product.unit}'),
+        title: Text('${product.displayName} · ${product.unit}'),
         subtitle: Row(
           children: [
             PlatformBadge(platform: bestPlatform, size: 22),

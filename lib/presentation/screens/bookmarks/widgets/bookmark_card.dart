@@ -34,7 +34,7 @@ class BookmarkCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: PlatformBadge(platform: platform),
-        title: Text('${product.emoji} ${product.name}'),
+        title: Text('${product.emoji} ${product.displayName}'),
         subtitle: coupon == null
             ? const Text('No active coupon on this platform right now')
             : CountdownText(
