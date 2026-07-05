@@ -13,6 +13,7 @@ class OnboardingCompleted extends ProfileEvent {
   final bool isNewUser;
   final String name;
   final String avatarEmoji;
+  final String tribe;
   final String location;
   final String categoryId;
   final PaymentMethod paymentMethod;
@@ -23,6 +24,7 @@ class OnboardingCompleted extends ProfileEvent {
     required this.isNewUser,
     required this.name,
     required this.avatarEmoji,
+    required this.tribe,
     required this.location,
     required this.categoryId,
     required this.paymentMethod,
@@ -38,6 +40,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, UserProfile> {
         isNewUser: event.isNewUser,
         name: event.name,
         avatarEmoji: event.avatarEmoji,
+        tribe: event.tribe,
         location: event.location,
         preferredCategoryId: event.categoryId,
         preferredPayment: event.paymentMethod,

@@ -15,7 +15,7 @@ class CartLineItem extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Text(product.emoji, style: const TextStyle(fontSize: 26)),
-      title: Text(product.name),
+      title: Text(product.displayName),
       subtitle: Text(product.unit),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

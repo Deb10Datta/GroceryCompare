@@ -17,7 +17,12 @@ class BookmarksScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Bookmarked Offers')),
       body: BlocBuilder<BookmarkBloc, List<Bookmark>>(
-        builder: (context, bookmarks) {
+        builder: (context, allBookmarks) {
+          // Drop bookmarks persisted under product IDs that no longer exist
+          // in the catalog (e.g. after a catalog overhaul).
+          final bookmarks = allBookmarks
+              .where((b) => catalog.productByIdOrNull(b.productId) != null)
+              .toList();
           if (bookmarks.isEmpty) {
             return const Center(
               child: Padding(

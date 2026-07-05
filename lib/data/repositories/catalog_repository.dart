@@ -36,6 +36,15 @@ class CatalogRepository {
 
   Product productById(String id) => products.firstWhere((p) => p.id == id);
 
+  /// Null-safe lookup for IDs that may have been persisted (cart/bookmarks)
+  /// before a catalog change and no longer exist.
+  Product? productByIdOrNull(String id) {
+    for (final p in products) {
+      if (p.id == id) return p;
+    }
+    return null;
+  }
+
   GroceryCategory categoryById(String id) =>
       categories.firstWhere((c) => c.id == id);
 

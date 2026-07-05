@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../blocs/profile_bloc.dart';
@@ -31,6 +32,28 @@ class DashboardScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Card(
+                clipBehavior: Clip.antiAlias,
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: ListTile(
+                  onTap: () => context.go('/home/products'),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: Icon(Icons.shopping_bag_outlined,
+                      size: 32, color: Theme.of(context).colorScheme.primary),
+                  title: Text(
+                    'Start shopping',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle:
+                      const Text('Browse the catalog and hunt down the best deals'),
+                  trailing: const Icon(Icons.arrow_forward_rounded),
+                ),
+              ),
+              const SizedBox(height: 24),
               if (profile.location.isNotEmpty) ...[
                 Text('Stores operating in your locality 📍', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 4),
