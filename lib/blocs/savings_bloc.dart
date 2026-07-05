@@ -12,6 +12,11 @@ class SavingsRecorded extends SavingsEvent {
   const SavingsRecorded({required this.platformName, required this.amountSaved});
 }
 
+class OrderMarkedDelivered extends SavingsEvent {
+  final String orderId;
+  const OrderMarkedDelivered(this.orderId);
+}
+
 class SavingsBloc extends HydratedBloc<SavingsEvent, List<SavingsRecord>> {
   SavingsBloc() : super(const []) {
     on<SavingsRecorded>((event, emit) {
@@ -22,6 +27,12 @@ class SavingsBloc extends HydratedBloc<SavingsEvent, List<SavingsRecord>> {
         amountSaved: event.amountSaved,
       );
       emit([record, ...state]);
+    });
+
+    on<OrderMarkedDelivered>((event, emit) {
+      emit(state
+          .map((r) => r.id == event.orderId ? r.copyWith(status: OrderStatus.delivered) : r)
+          .toList());
     });
   }
 

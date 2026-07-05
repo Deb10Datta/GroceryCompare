@@ -1,3 +1,4 @@
+import '../../domain/location_availability.dart';
 import '../mock/mock_categories.dart';
 import '../mock/mock_coupons.dart';
 import '../mock/mock_payment_offers.dart';
@@ -59,4 +60,9 @@ class CatalogRepository {
 
   List<PaymentOffer> paymentOffersFor(String platformId) =>
       paymentOffers.where((o) => o.platformId == platformId).toList();
+
+  List<GroceryPlatform> platformsAvailableFor(String location) {
+    final ids = platformIdsAvailableFor(location);
+    return platforms.where((p) => ids.contains(p.id)).toList();
+  }
 }

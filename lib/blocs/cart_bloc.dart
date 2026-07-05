@@ -6,7 +6,8 @@ sealed class CartEvent {
 
 class CartItemAdded extends CartEvent {
   final String productId;
-  const CartItemAdded(this.productId);
+  final int quantity;
+  const CartItemAdded(this.productId, {this.quantity = 1});
 }
 
 class CartItemRemoved extends CartEvent {
@@ -22,7 +23,7 @@ class CartBloc extends HydratedBloc<CartEvent, Map<String, int>> {
   CartBloc() : super(const {}) {
     on<CartItemAdded>((event, emit) {
       final updated = Map<String, int>.from(state);
-      updated[event.productId] = (updated[event.productId] ?? 0) + 1;
+      updated[event.productId] = (updated[event.productId] ?? 0) + event.quantity;
       emit(updated);
     });
 

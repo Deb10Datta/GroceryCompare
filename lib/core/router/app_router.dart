@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../blocs/profile_bloc.dart';
+import '../../presentation/screens/account_linking/account_linking_screen.dart';
 import '../../presentation/screens/bookmarks/bookmarks_screen.dart';
 import '../../presentation/screens/cart/cart_screen.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
@@ -30,6 +31,10 @@ GoRouter buildAppRouter(ProfileBloc profileBloc) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/account-linking',
+        builder: (context, state) => const AccountLinkingScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => HomeShell(child: child),

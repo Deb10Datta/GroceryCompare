@@ -23,15 +23,22 @@ class _PlatformRowData {
   });
 }
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final String productId;
 
   const ProductDetailScreen({super.key, required this.productId});
 
   @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  int _quantity = 1;
+
+  @override
   Widget build(BuildContext context) {
     final catalog = context.read<CatalogRepository>();
-    final product = catalog.productById(productId);
+    final product = catalog.productById(widget.productId);
 
     final rows = catalog.platforms.map((platform) {
       final base = catalog.priceOf(product.id, platform.id);
@@ -83,12 +90,31 @@ class ProductDetailScreen extends StatelessWidget {
               isBest: i == 0,
             ),
           const SizedBox(height: 8),
+          Row(
+            children: [
+              Text('Quantity', style: Theme.of(context).textTheme.titleSmall),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline),
+                tooltip: 'Decrease quantity',
+                onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
+              ),
+              Text('$_quantity', style: Theme.of(context).textTheme.titleMedium),
+              IconButton(
+                tooltip: 'Increase quantity',
+                icon: const Icon(Icons.add_circle_outline),
+                onPressed: () => setState(() => _quantity++),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           FilledButton.icon(
             onPressed: () {
-              context.read<CartBloc>().add(CartItemAdded(product.id));
+              context.read<CartBloc>().add(CartItemAdded(product.id, quantity: _quantity));
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Added ${product.name} to cart 🛒')),
+                SnackBar(content: Text('Added $_quantity × ${product.name} to cart 🛒')),
               );
+              setState(() => _quantity = 1);
             },
             icon: const Icon(Icons.add_shopping_cart),
             label: const Text('Add to cart'),

@@ -70,7 +70,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             paymentMethod: _paymentMethod,
           ));
       context.read<CategoryFilterCubit>().select(_categoryId);
-      context.go('/home/products');
+      context.go('/account-linking');
       return;
     }
     setState(() => _page++);
