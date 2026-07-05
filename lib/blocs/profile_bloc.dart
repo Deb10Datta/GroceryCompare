@@ -8,6 +8,9 @@ sealed class ProfileEvent {
 }
 
 class OnboardingCompleted extends ProfileEvent {
+  final String email;
+  final String phoneNumber;
+  final bool isNewUser;
   final String name;
   final String avatarEmoji;
   final String location;
@@ -15,6 +18,9 @@ class OnboardingCompleted extends ProfileEvent {
   final PaymentMethod paymentMethod;
 
   const OnboardingCompleted({
+    required this.email,
+    required this.phoneNumber,
+    required this.isNewUser,
     required this.name,
     required this.avatarEmoji,
     required this.location,
@@ -27,6 +33,9 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, UserProfile> {
   ProfileBloc() : super(const UserProfile()) {
     on<OnboardingCompleted>((event, emit) {
       emit(UserProfile(
+        email: event.email,
+        phoneNumber: event.phoneNumber,
+        isNewUser: event.isNewUser,
         name: event.name,
         avatarEmoji: event.avatarEmoji,
         location: event.location,

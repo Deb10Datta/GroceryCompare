@@ -3,6 +3,9 @@ import 'package:equatable/equatable.dart';
 import 'payment_method.dart';
 
 class UserProfile extends Equatable {
+  final String email;
+  final String phoneNumber;
+  final bool isNewUser;
   final String name;
   final String avatarEmoji;
   final String location;
@@ -11,6 +14,9 @@ class UserProfile extends Equatable {
   final bool onboardingComplete;
 
   const UserProfile({
+    this.email = '',
+    this.phoneNumber = '',
+    this.isNewUser = false,
     this.name = '',
     this.avatarEmoji = '🙂',
     this.location = '',
@@ -20,6 +26,9 @@ class UserProfile extends Equatable {
   });
 
   Map<String, dynamic> toJson() => {
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'isNewUser': isNewUser,
         'name': name,
         'avatarEmoji': avatarEmoji,
         'location': location,
@@ -29,6 +38,9 @@ class UserProfile extends Equatable {
       };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
+        email: json['email'] as String? ?? '',
+        phoneNumber: json['phoneNumber'] as String? ?? '',
+        isNewUser: json['isNewUser'] as bool? ?? false,
         name: json['name'] as String? ?? '',
         avatarEmoji: json['avatarEmoji'] as String? ?? '🙂',
         location: json['location'] as String? ?? '',
@@ -42,6 +54,9 @@ class UserProfile extends Equatable {
 
   @override
   List<Object?> get props => [
+        email,
+        phoneNumber,
+        isNewUser,
         name,
         avatarEmoji,
         location,

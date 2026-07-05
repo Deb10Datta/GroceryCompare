@@ -35,6 +35,9 @@ class CatalogRepository {
 
   Product productById(String id) => products.firstWhere((p) => p.id == id);
 
+  GroceryCategory categoryById(String id) =>
+      categories.firstWhere((c) => c.id == id);
+
   List<Product> productsByCategory(String categoryId) =>
       products.where((p) => p.categoryId == categoryId).toList();
 

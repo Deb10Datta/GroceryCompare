@@ -5,6 +5,8 @@ import '../../../blocs/cart_bloc.dart';
 import '../../../data/models/coupon.dart';
 import '../../../data/models/grocery_platform.dart';
 import '../../../data/repositories/catalog_repository.dart';
+import '../../widgets/app_icon_tile.dart';
+import '../../widgets/quirky_back_button.dart';
 import 'widgets/platform_price_row.dart';
 
 class _PlatformRowData {
@@ -44,12 +46,30 @@ class ProductDetailScreen extends StatelessWidget {
     }).toList()
       ..sort((a, b) => a.effective.compareTo(b.effective));
 
+    final category = catalog.categoryById(product.categoryId);
+
     return Scaffold(
-      appBar: AppBar(title: Text('${product.emoji} ${product.name}')),
+      appBar: AppBar(title: Text(product.name)),
+      floatingActionButton: QuirkyBackButton(onPressed: () => Navigator.of(context).pop()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(product.unit, style: Theme.of(context).textTheme.bodyMedium),
+          Row(
+            children: [
+              AppIconTile(emoji: product.emoji, color: category.color, size: 56),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(product.name, style: Theme.of(context).textTheme.titleLarge),
+                    Text(product.unit, style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Text('Compare across platforms', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
