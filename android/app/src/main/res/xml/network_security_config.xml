@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Forbids cleartext (http://) traffic app-wide, including inside the
+  hidden-store WebViews. Every endpoint the app touches — the India Post
+  PIN lookup and the grocery storefronts we hand off to — is HTTPS, so a
+  plaintext request can only be an attacker downgrading the connection to
+  read or tamper with the PIN lookup or a checkout redirect. Blocking it
+  removes that MITM path.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

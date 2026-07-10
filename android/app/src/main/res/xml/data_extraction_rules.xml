@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ (API 31+) backup / device-transfer rules.
+
+  The app stores the user's profile (email, phone, address, PIN code) and
+  order history locally via hydrated_bloc. None of that should leave the
+  device through cloud backup or a device-to-device transfer, so every
+  data domain is excluded here. Combined with android:allowBackup="false",
+  this closes the "pull the profile out of a backup" exfiltration path.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

@@ -64,6 +64,7 @@ class PlatformSessionManager {
     for (final platform in available) {
       final controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(_guardedNavigation())
         ..loadRequest(platform.websiteUri);
       _sessions[platform.id] = PlatformCartSession(
         platform: platform,
@@ -71,6 +72,23 @@ class PlatformSessionManager {
       );
     }
     _mirroredCart = const {};
+  }
+
+  /// These sessions run off-screen with JavaScript enabled, so a rogue
+  /// redirect could quietly point one at a local resource. Confine every
+  /// navigation to real web/blank schemes — `file:`, `content:`,
+  /// `javascript:`, `intent:`, `data:` and the like are refused, so a
+  /// background tab can never reach on-device data or hijack an intent.
+  NavigationDelegate _guardedNavigation() {
+    return NavigationDelegate(
+      onNavigationRequest: (request) {
+        final scheme = Uri.tryParse(request.url)?.scheme.toLowerCase();
+        const allowed = {'http', 'https', 'about'};
+        return allowed.contains(scheme)
+            ? NavigationDecision.navigate
+            : NavigationDecision.prevent;
+      },
+    );
   }
 
   /// Mirrors the in-app cart into every live session. Newly added products

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pre-Android 12 (fullBackupContent) rules. Belt-and-suspenders alongside
+  android:allowBackup="false": exclude every local data domain so the
+  on-device profile (email, phone, address, PIN) and order history are
+  never written to an Auto Backup archive.
+-->
+<full-backup-content>
+    <exclude domain="file" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="external" />
+</full-backup-content>
