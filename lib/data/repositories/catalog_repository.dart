@@ -74,4 +74,14 @@ class CatalogRepository {
     final ids = platformIdsAvailableFor(location);
     return platforms.where((p) => ids.contains(p.id)).toList();
   }
+
+  /// Serviceability by PIN code first (more precise), falling back to the
+  /// free-text location for profiles created before pincodes existed.
+  List<GroceryPlatform> platformsServing({
+    required String pincode,
+    required String location,
+  }) {
+    final ids = platformIdsServing(pincode: pincode, location: location);
+    return platforms.where((p) => ids.contains(p.id)).toList();
+  }
 }
