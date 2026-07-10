@@ -5,6 +5,7 @@ import '../../../blocs/cart_bloc.dart';
 import '../../../data/models/coupon.dart';
 import '../../../data/models/grocery_platform.dart';
 import '../../../data/repositories/catalog_repository.dart';
+import '../../helpers/serving_platforms.dart';
 import '../../widgets/app_icon_tile.dart';
 import '../../widgets/quirky_back_button.dart';
 import 'widgets/platform_price_row.dart';
@@ -40,7 +41,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final catalog = context.read<CatalogRepository>();
     final product = catalog.productById(widget.productId);
 
-    final rows = catalog.platforms.map((platform) {
+    // Compare prices only across the stores delivering to the user.
+    final servingPlatforms = watchServingPlatforms(context);
+    final hiddenCount = catalog.platforms.length - servingPlatforms.length;
+    final rows = servingPlatforms.map((platform) {
       final base = catalog.priceOf(product.id, platform.id);
       final coupon = catalog.couponForPlatform(platform.id);
       final discount = coupon?.previewDiscount(base) ?? 0;
@@ -82,6 +86,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
           const SizedBox(height: 16),
           Text('Compare across platforms', style: Theme.of(context).textTheme.titleMedium),
+          if (hiddenCount > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                '$hiddenCount store${hiddenCount == 1 ? '' : 's'} not shown — '
+                'no delivery to your area yet.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
           const SizedBox(height: 8),
           for (var i = 0; i < rows.length; i++)
             PlatformPriceRow(
