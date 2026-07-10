@@ -47,22 +47,27 @@ class BookmarkCard extends StatelessWidget {
                       context,
                     ).textTheme.bodySmall?.copyWith(color: Colors.deepOrange),
                   ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                if (effectivePrice < basePrice)
-                  Text(
-                    formatCurrency(basePrice),
-                    style: const TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
-                      fontSize: 12,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (effectivePrice < basePrice)
+                      Text(
+                        formatCurrency(basePrice),
+                        style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    Text(
+                      formatCurrency(effectivePrice),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                Text(
-                  formatCurrency(effectivePrice),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  ],
                 ),
                 IconButton(
                   icon: const Icon(Icons.bookmark_remove_outlined, size: 20),
