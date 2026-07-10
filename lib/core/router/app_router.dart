@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../blocs/profile_bloc.dart';
-import '../../presentation/screens/account_linking/account_linking_screen.dart';
 import '../../presentation/screens/bookmarks/bookmarks_screen.dart';
 import '../../presentation/screens/cart/cart_screen.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
@@ -10,6 +9,7 @@ import '../../presentation/screens/home/home_shell.dart';
 import '../../presentation/screens/onboarding/onboarding_screen.dart';
 import '../../presentation/screens/product_detail/product_detail_screen.dart';
 import '../../presentation/screens/products/product_list_screen.dart';
+import '../../presentation/screens/store_setup/store_setup_screen.dart';
 import 'go_router_refresh_stream.dart';
 
 GoRouter buildAppRouter(ProfileBloc profileBloc) {
@@ -33,8 +33,8 @@ GoRouter buildAppRouter(ProfileBloc profileBloc) {
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
-        path: '/account-linking',
-        builder: (context, state) => const AccountLinkingScreen(),
+        path: '/store-setup',
+        builder: (context, state) => const StoreSetupScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => HomeShell(child: child),
