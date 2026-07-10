@@ -6,10 +6,11 @@ import '../../../blocs/cart_bloc.dart';
 import '../../../blocs/profile_bloc.dart';
 import '../../../blocs/savings_bloc.dart';
 import '../../../data/repositories/catalog_repository.dart';
+import '../../../data/services/platform_session_manager.dart';
 import '../../../domain/cart_comparator.dart';
 import 'widgets/cart_line_item.dart';
-import 'widgets/checkout_sheet.dart';
 import 'widgets/platform_comparison_card.dart';
+import 'widgets/platform_handoff_sheet.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -41,7 +42,18 @@ class CartScreen extends StatelessWidget {
           }
 
           final profile = context.watch<ProfileBloc>().state;
-          final totals = CartComparator(catalog).compare(cart, profile.preferredPayment);
+          // Only stores that actually deliver to the user's PIN code get a
+          // total and a checkout link; the rest aren't shown at all.
+          final servingPlatforms = catalog.platformsServing(
+            pincode: profile.pincode,
+            location: profile.location,
+          );
+          final hiddenCount = catalog.platforms.length - servingPlatforms.length;
+          final totals = CartComparator(catalog).compare(
+            cart,
+            profile.preferredPayment,
+            platforms: servingPlatforms,
+          );
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -54,14 +66,45 @@ class CartScreen extends StatelessWidget {
               }),
               const Divider(height: 32),
               Text('Compare total across platforms', style: Theme.of(context).textTheme.titleMedium),
+              if (hiddenCount > 0) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '$hiddenCount store${hiddenCount == 1 ? '' : 's'} not shown — '
+                  'no delivery to PIN ${profile.pincode.isEmpty ? 'your area' : profile.pincode} yet.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const SizedBox(height: 8),
               for (var i = 0; i < totals.length; i++)
                 PlatformComparisonCard(
                   total: totals[i],
                   isBest: i == 0,
                   onCheckout: () async {
-                    final confirmed = await showCheckoutSheet(context, totals[i]);
-                    if (confirmed != true || !context.mounted) return;
+                    final items = [
+                      for (final e in cart.entries)
+                        (product: catalog.productById(e.key), quantity: e.value),
+                    ];
+                    final confirmed = await showPlatformHandoffSheet(
+                      context,
+                      total: totals[i],
+                      items: items,
+                    );
+                    if (!context.mounted) return;
+
+                    // Committing to one platform closed the other hidden
+                    // store tabs — reopen the full set for whatever the
+                    // user shops next.
+                    final sessionProfile = context.read<ProfileBloc>().state;
+                    final manager = context.read<PlatformSessionManager>();
+                    manager.startSessions(
+                      pincode: sessionProfile.pincode,
+                      location: sessionProfile.location,
+                    );
+
+                    if (confirmed != true) {
+                      manager.syncCart(context.read<CartBloc>().state);
+                      return;
+                    }
                     context.read<SavingsBloc>().add(SavingsRecorded(
                           platformName: totals[i].platform.name,
                           amountSaved: totals[i].totalSavings,

@@ -36,12 +36,15 @@ class CartComparator {
 
   final CatalogRepository catalog;
 
+  /// Pass [platforms] to compare only the stores actually serving the
+  /// user's area; defaults to every platform in the catalog.
   List<PlatformTotal> compare(
     Map<String, int> cartItems,
-    PaymentMethod preferredPayment,
-  ) {
+    PaymentMethod preferredPayment, {
+    List<GroceryPlatform>? platforms,
+  }) {
     final results = <PlatformTotal>[];
-    for (final platform in catalog.platforms) {
+    for (final platform in platforms ?? catalog.platforms) {
       var rawTotal = 0.0;
       for (final entry in cartItems.entries) {
         rawTotal += catalog.priceOf(entry.key, platform.id) * entry.value;
