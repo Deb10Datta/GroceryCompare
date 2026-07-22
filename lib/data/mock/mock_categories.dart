@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../models/grocery_category.dart';
 
-// Pop accent palette — matches the bright theme in core/theme/app_theme.dart
-// (orange / yellow / blue / green mains, pink as the fifth tile accent).
-const _popBlue = Color(0xFF2E86FF);
-const _popPink = Color(0xFFFF4D7E);
-const _popYellow = Color(0xFFFFC91F);
-const _popOrange = Color(0xFFFF6B2C);
-const _popGreen = Color(0xFF00A651);
+// Category tint set — draws from the same warm "Market" tokens as
+// core/theme/app_theme.dart, plus two muted extras (ochre, slate blue) for
+// hues the design system doesn't otherwise define. These are flat
+// compile-time constants (this file has no BuildContext to read brightness
+// from), so they intentionally stay fixed across light and dark.
+const _popBlue = slateBlueColor;
+const _popPink = berryColor;
+const _popYellow = ochreColor;
+const _popOrange = accent2Color;
+const _popGreen = leafColor;
 
 const List<GroceryCategory> mockCategories = [
   GroceryCategory(

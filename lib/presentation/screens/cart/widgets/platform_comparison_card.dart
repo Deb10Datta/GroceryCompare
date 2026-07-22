@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../data/models/payment_method.dart';
 import '../../../../domain/cart_comparator.dart';
@@ -20,6 +21,8 @@ class PlatformComparisonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.extension<AppPalette>()!;
     final coupon = total.coupon;
     final missingForCoupon = (coupon != null && !total.couponApplied)
         ? coupon.minBasketValue - total.rawTotal
@@ -33,8 +36,8 @@ class PlatformComparisonCard extends StatelessWidget {
           elevation: 0,
           shape: isBest
               ? RoundedRectangleBorder(
-                  side: const BorderSide(color: Colors.green, width: 2.5),
-                  borderRadius: BorderRadius.circular(14),
+                  side: BorderSide(color: palette.success, width: 1.6),
+                  borderRadius: BorderRadius.circular(22),
                 )
               : null,
           child: Padding(
@@ -63,9 +66,9 @@ class PlatformComparisonCard extends StatelessWidget {
                 if (total.finalTotal < total.rawTotal)
                   Text(
                     formatCurrency(total.rawTotal),
-                    style: const TextStyle(
+                    style: TextStyle(
                       decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 Text(
@@ -82,11 +85,18 @@ class PlatformComparisonCard extends StatelessWidget {
                 else if (coupon != null)
                   Text(
                     'Add ${formatCurrency(missingForCoupon)} more to unlock ${coupon.code}',
-                    style: const TextStyle(color: Colors.deepOrange),
+                    style: TextStyle(color: palette.urgent),
                   ),
                 if (total.paymentOfferApplied)
                   Text(
-                    '✅ ${total.paymentOffer!.method.emoji} ${total.paymentOffer!.method.label} offer applied',
+                    '✅ ${total.paymentOffer!.method.emoji} ${total.paymentOffer!.method.label} offer applied '
+                    '· saved ${formatCurrency(total.afterCoupon - total.finalTotal)}',
+                  )
+                else if (total.paymentOffer != null)
+                  Text(
+                    'Add ${formatCurrency(total.paymentOffer!.minBasketValue - total.rawTotal)} more '
+                    'to unlock the ${total.paymentOffer!.method.label} offer',
+                    style: TextStyle(color: palette.urgent),
                   ),
                 const SizedBox(height: 10),
                 Align(

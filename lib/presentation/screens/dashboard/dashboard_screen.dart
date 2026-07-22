@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../blocs/profile_bloc.dart';
 import '../../../blocs/savings_bloc.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency.dart';
 import '../../../data/models/savings_record.dart';
 import '../../../data/repositories/catalog_repository.dart';
@@ -167,9 +168,9 @@ class DashboardScreen extends StatelessWidget {
                           subtitle: Text(
                             DateFormat('MMM d, y · h:mm a').format(r.timestamp),
                           ),
-                          trailing: const Icon(
+                          trailing: Icon(
                             Icons.check_circle,
-                            color: Colors.green,
+                            color: Theme.of(context).extension<AppPalette>()!.success,
                           ),
                         ),
                       ),

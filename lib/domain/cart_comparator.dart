@@ -30,7 +30,9 @@ class PlatformTotal {
 
 /// Computes, for a cart of productId->quantity, what the basket would cost
 /// on each platform after that platform's active coupon (gated on minimum
-/// basket value) and the user's preferred-payment offer are applied.
+/// basket value) and the best payment offer matching a method the user has
+/// on record are applied. When a platform runs no offer for any of the
+/// user's methods, only its default coupon codes count.
 class CartComparator {
   const CartComparator(this.catalog);
 
@@ -40,7 +42,7 @@ class CartComparator {
   /// user's area; defaults to every platform in the catalog.
   List<PlatformTotal> compare(
     Map<String, int> cartItems,
-    PaymentMethod preferredPayment, {
+    Set<PaymentMethod> ownedMethods, {
     List<GroceryPlatform>? platforms,
   }) {
     final results = <PlatformTotal>[];
@@ -55,13 +57,15 @@ class CartComparator {
       final afterCoupon = rawTotal - couponDiscount;
 
       PaymentOffer? paymentOffer;
+      var paymentDiscount = 0.0;
       for (final offer in catalog.paymentOffersFor(platform.id)) {
-        if (offer.method == preferredPayment) {
+        if (!ownedMethods.contains(offer.method)) continue;
+        final discount = offer.discountFor(rawTotal);
+        if (paymentOffer == null || discount > paymentDiscount) {
           paymentOffer = offer;
-          break;
+          paymentDiscount = discount;
         }
       }
-      final paymentDiscount = paymentOffer?.discountFor(rawTotal) ?? 0;
       final finalTotal = afterCoupon - paymentDiscount;
 
       results.add(PlatformTotal(

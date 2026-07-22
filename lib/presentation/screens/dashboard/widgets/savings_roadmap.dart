@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../domain/roadmap_items.dart';
 
@@ -10,6 +11,7 @@ class SavingsRoadmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final success = Theme.of(context).extension<AppPalette>()!.success;
     return Column(
       children: savingsRoadmap.map((item) {
         final progress = (totalSavings / item.cost).clamp(0.0, 1.0);
@@ -27,7 +29,7 @@ class SavingsRoadmap extends StatelessWidget {
               ),
             ),
             trailing: unlocked
-                ? const Text('🎉 Unlocked!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
+                ? Text('🎉 Unlocked!', style: TextStyle(color: success, fontWeight: FontWeight.bold))
                 : Text(formatCurrency(item.cost)),
           ),
         );

@@ -17,7 +17,7 @@ class OnboardingCompleted extends ProfileEvent {
   final String location;
   final String pincode;
   final String categoryId;
-  final PaymentMethod paymentMethod;
+  final Map<PaymentMethod, List<String>> paymentOptions;
 
   const OnboardingCompleted({
     required this.name,
@@ -29,7 +29,7 @@ class OnboardingCompleted extends ProfileEvent {
     required this.location,
     required this.pincode,
     required this.categoryId,
-    required this.paymentMethod,
+    required this.paymentOptions,
   });
 }
 
@@ -46,7 +46,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, UserProfile> {
         location: event.location,
         pincode: event.pincode,
         preferredCategoryId: event.categoryId,
-        preferredPayment: event.paymentMethod,
+        paymentOptions: event.paymentOptions,
         onboardingComplete: true,
       ));
     });

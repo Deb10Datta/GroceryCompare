@@ -4,3 +4,12 @@ h List all available interactive commands.
 d Detach (terminate "flutter run" but leave application running).
 c Clear the screen
 q Quit (terminate the application on the device).
+
+# 1. Boot the emulator (or start it from Android Studio's Device Manager)
+flutter emulators --launch Pixel_7
+
+# 2. Wait ~30–60s for it to boot, then confirm Flutter sees it
+flutter devices
+
+# 3. Run the app on it (the device id is usually emulator-5554)
+flutter run -d emulator-5554

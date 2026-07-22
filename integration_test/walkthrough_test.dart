@@ -92,6 +92,13 @@ void main() {
     await tapVisible(tester, find.text('Next'));
     await settle(tester);
     await pumpUntilFound(tester, find.text('How do you like to pay? 💳'));
+    // Record a couple of payment methods: tick UPI and pick apps under it,
+    // then tick Credit Card too — the step needs at least one method.
+    await tapVisible(tester, find.text('📱  UPI'));
+    await tapVisible(tester, find.text('Google Pay'));
+    await tapVisible(tester, find.text('PhonePe'));
+    await tapVisible(tester, find.text('💳  Credit Card'));
+    await settle(tester);
     await binding.takeScreenshot('onboarding_payment');
     await tapVisible(tester, find.text('Set up my stores 🏪'));
 

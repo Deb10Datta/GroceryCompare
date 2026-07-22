@@ -51,7 +51,7 @@ class CartScreen extends StatelessWidget {
           final hiddenCount = catalog.platforms.length - servingPlatforms.length;
           final totals = CartComparator(catalog).compare(
             cart,
-            profile.preferredPayment,
+            profile.ownedPaymentMethods,
             platforms: servingPlatforms,
           );
 

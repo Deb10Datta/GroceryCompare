@@ -78,7 +78,7 @@ class ProductGridCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: popGreen,
+                          color: theme.extension<AppPalette>()!.success,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

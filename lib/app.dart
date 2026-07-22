@@ -77,6 +77,8 @@ class _CompareGroceryAppState extends State<CompareGroceryApp> {
             title: 'Compare Grocery',
             debugShowCheckedModeBanner: false,
             theme: buildAppTheme(),
+            darkTheme: buildAppDarkTheme(),
+            themeMode: ThemeMode.system,
             routerConfig: _router,
           ),
         ),

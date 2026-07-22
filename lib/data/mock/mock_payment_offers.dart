@@ -37,4 +37,18 @@ const List<PaymentOffer> mockPaymentOffers = [
     maxDiscountCap: 50,
     minBasketValue: 199,
   ),
+  PaymentOffer(
+    platformId: 'blinkit',
+    method: PaymentMethod.creditCard,
+    discountPercent: 12,
+    maxDiscountCap: 60,
+    minBasketValue: 299,
+  ),
+  PaymentOffer(
+    platformId: 'zepto',
+    method: PaymentMethod.netBanking,
+    discountPercent: 5,
+    maxDiscountCap: 60,
+    minBasketValue: 249,
+  ),
 ];

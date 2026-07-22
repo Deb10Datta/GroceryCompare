@@ -110,6 +110,7 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = theme.extension<AppPalette>()!;
     // Pitch only the stores that actually deliver to the user's area.
     final platforms = watchServingPlatforms(context);
     final names = platforms.take(3).map((p) => p.name).join(', ');
@@ -119,22 +120,12 @@ class _HeroBanner extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: FloatingTile(
         interactive: false,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        borderRadius: const BorderRadius.all(Radius.circular(24)),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2.5,
-            ),
-            gradient: LinearGradient(
-              colors: [
-                popYellow.withValues(alpha: 0.45),
-                popOrange.withValues(alpha: 0.35),
-              ],
-            ),
+            gradient: palette.heroGradient,
+            borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,6 +133,7 @@ class _HeroBanner extends StatelessWidget {
               Text(
                 'Compare & buy at the cheapest price',
                 style: theme.textTheme.titleMedium?.copyWith(
+                  color: palette.onGradient,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -153,7 +145,7 @@ class _HeroBanner extends StatelessWidget {
                     : 'Live prices across $names in your area — '
                           'save money in under 60 seconds.',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: palette.onGradient.withValues(alpha: 0.9),
                 ),
               ),
             ],

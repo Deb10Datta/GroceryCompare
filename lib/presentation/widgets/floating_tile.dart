@@ -95,6 +95,10 @@ class _FloatingTileState extends State<FloatingTile> {
     final blur =
         (18 + 12 * _fromLight.distance) * (_hovered && !_pressed ? 1.4 : 1.0);
     final alpha = _pressed ? 0.18 : (_hovered ? 0.42 : 0.30);
+    // Warm ink-tinted shadow (from the theme's `shadow` token) rather than
+    // flat black — matches the design's soft brown-tinted card shadows in
+    // light mode and a true black in dark mode.
+    final shadowColor = Theme.of(context).colorScheme.shadow;
 
     Widget tile = AnimatedScale(
       scale: _pressed ? 0.97 : (_hovered ? 1.015 : 1.0),
@@ -108,14 +112,14 @@ class _FloatingTileState extends State<FloatingTile> {
           boxShadow: [
             // Main directional shadow cast by the central light source.
             BoxShadow(
-              color: Colors.black.withValues(alpha: alpha),
+              color: shadowColor.withValues(alpha: alpha),
               offset: shadowOffset,
               blurRadius: blur,
               spreadRadius: -1,
             ),
             // Tight contact shadow hugging the tile, for grounded depth.
             BoxShadow(
-              color: Colors.black.withValues(alpha: alpha * 0.55),
+              color: shadowColor.withValues(alpha: alpha * 0.55),
               offset: Offset(shadowOffset.dx * 0.3, shadowOffset.dy * 0.3),
               blurRadius: blur * 0.35,
               spreadRadius: 0,

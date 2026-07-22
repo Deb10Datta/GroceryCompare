@@ -140,8 +140,8 @@ class _PlatformHandoffSheetState extends State<PlatformHandoffSheet> {
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outlineVariant, width: 2),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.all(20),
         child: ConstrainedBox(

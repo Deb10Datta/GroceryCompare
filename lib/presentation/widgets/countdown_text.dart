@@ -37,7 +37,8 @@ class _CountdownTextState extends State<CountdownText> {
     if (_remaining.isNegative) {
       return Text(
         'Offer expired',
-        style: (widget.style ?? const TextStyle()).copyWith(color: Colors.redAccent),
+        style: (widget.style ?? const TextStyle())
+            .copyWith(color: Theme.of(context).colorScheme.error),
       );
     }
     final h = _remaining.inHours;

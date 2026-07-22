@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../blocs/cart_bloc.dart';
 import '../../../blocs/profile_bloc.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../data/models/grocery_platform.dart';
 import '../../../data/models/user_profile.dart';
 import '../../../data/repositories/catalog_repository.dart';
@@ -135,9 +136,9 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                                   strokeWidth: 2,
                                 ),
                               ),
-                              _StoreStatus.live => const Icon(
+                              _StoreStatus.live => Icon(
                                 Icons.check_circle,
-                                color: Colors.green,
+                                color: Theme.of(context).extension<AppPalette>()!.success,
                               ),
                               _StoreStatus.unavailable => Icon(
                                 Icons.remove_circle_outline,

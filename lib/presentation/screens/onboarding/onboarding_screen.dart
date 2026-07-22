@@ -95,7 +95,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String? _sex;
   String? _tribe;
   String? _categoryId;
-  PaymentMethod _paymentMethod = PaymentMethod.upi;
+  // Record of the payment methods the user has, each mapped to the
+  // providers (UPI apps, banks, card issuers…) ticked under it.
+  final Map<PaymentMethod, Set<String>> _payments = {};
 
   // Live PIN-code serviceability check state.
   PincodeLookupResult? _pincodeLookup;
@@ -137,6 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         1 => _contactStepValid,
         2 => _locationStepValid,
         3 => _categoryId != null,
+        4 => _payments.isNotEmpty,
         _ => true,
       };
 
@@ -194,7 +197,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             location: _locationController.text.trim(),
             pincode: _pincodeController.text.trim(),
             categoryId: _categoryId!,
-            paymentMethod: _paymentMethod,
+            paymentOptions: {
+              for (final entry in _payments.entries) entry.key: entry.value.toList(),
+            },
           ));
       context.read<CategoryFilterCubit>().select(_categoryId);
       context.go('/store-setup');
@@ -530,22 +535,98 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildPaymentStep(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return _StepScaffold(
       title: 'How do you like to pay? 💳',
-      subtitle: "We'll surface payment offers that match this.",
-      child: RadioGroup<PaymentMethod>(
-        groupValue: _paymentMethod,
-        onChanged: (v) => setState(() => _paymentMethod = v!),
-        child: Column(
-          children: PaymentMethod.values.map((method) {
-            return Card(
-              child: RadioListTile<PaymentMethod>(
-                value: method,
-                title: Text('${method.emoji}  ${method.label}'),
+      subtitle: 'Tick every payment option you have — and the apps or banks '
+          'behind them. Pick as many as you like.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: scheme.primary.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'See the Offers which Matter to You !',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'This is just a record of what you can pay with. When we '
+                  'round up offer codes, we first check whether a grocery '
+                  'platform is running a discount for one of your payment '
+                  'methods — if none match, you simply see its regular '
+                  'default codes instead. Stored only on this device, and '
+                  'never any card numbers or account details.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...PaymentMethod.values.map((method) => _buildPaymentTile(context, method)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentTile(BuildContext context, PaymentMethod method) {
+    final selected = _payments.containsKey(method);
+    final chosenProviders = _payments[method] ?? const <String>{};
+
+    return Card(
+      child: Column(
+        children: [
+          CheckboxListTile(
+            value: selected,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text('${method.emoji}  ${method.label}'),
+            onChanged: (checked) => setState(() {
+              if (checked == true) {
+                _payments[method] = <String>{};
+              } else {
+                _payments.remove(method);
+              }
+            }),
+          ),
+          if (selected && method.providers.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(method.providerPrompt,
+                      style: Theme.of(context).textTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: method.providers.map((provider) {
+                      return FilterChip(
+                        label: Text(provider),
+                        selected: chosenProviders.contains(provider),
+                        onSelected: (picked) => setState(() {
+                          final providers = _payments[method]!;
+                          picked ? providers.add(provider) : providers.remove(provider);
+                        }),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-            );
-          }).toList(),
-        ),
+            ),
+        ],
       ),
     );
   }

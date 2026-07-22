@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../data/models/coupon.dart';
 import '../../../../data/models/grocery_platform.dart';
@@ -30,6 +31,8 @@ class BookmarkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = theme.extension<AppPalette>()!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: FloatingTile(
@@ -43,9 +46,7 @@ class BookmarkCard extends StatelessWidget {
                 ? const Text('No active coupon on this platform right now')
                 : CountdownText(
                     expiresAt: coupon!.expiresAt,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.deepOrange),
+                    style: theme.textTheme.bodySmall?.copyWith(color: palette.urgent),
                   ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -57,9 +58,9 @@ class BookmarkCard extends StatelessWidget {
                     if (effectivePrice < basePrice)
                       Text(
                         formatCurrency(basePrice),
-                        style: const TextStyle(
+                        style: TextStyle(
                           decoration: TextDecoration.lineThrough,
-                          color: Colors.grey,
+                          color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
